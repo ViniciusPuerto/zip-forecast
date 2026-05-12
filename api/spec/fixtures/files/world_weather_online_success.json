@@ -1,0 +1,26 @@
+{
+  "data": {
+    "request": [
+      {
+        "type": "Zipcode",
+        "query": "94102, United States Of America"
+      }
+    ],
+    "current_condition": [
+      {
+        "observation_time": "12:00 PM",
+        "temp_F": "60",
+        "temp_C": "16",
+        "weatherDesc": [{ "value": "Sunny" }]
+      }
+    ],
+    "weather": [
+      {
+        "date": "2026-05-12",
+        "maxtempF": "65",
+        "mintempF": "55",
+        "hourly": []
+      }
+    ]
+  }
+}
