@@ -1,0 +1,48 @@
+# Local specs and notes (not versioned in this repo)
+/docs/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# --- API (Rails) — paths under api/ ---
+api/tmp/
+api/log/
+api/storage/
+api/public/assets
+api/.bundle/
+api/vendor/bundle/
+api/node_modules/
+api/coverage/
+api/brakeman-output.*
+api/config/master.key
+api/config/credentials/*.key
+
+# --- Frontend (Node / Vite) — paths under frontend/ ---
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.vite/
+frontend/coverage/
+frontend/*.local
+
+# Logs (anywhere)
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Docker / misc
+*.pem
