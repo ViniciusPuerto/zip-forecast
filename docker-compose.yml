@@ -49,6 +49,7 @@ services:
       POSTGRES_DB: api_development
       REDIS_URL: redis://redis:6379/0
       FRONTEND_ORIGIN: http://localhost:5173
+      WORLD_WEATHER_ONLINE_API_KEY: ${WORLD_WEATHER_ONLINE_API_KEY:-}
     depends_on:
       db:
         condition: service_healthy
