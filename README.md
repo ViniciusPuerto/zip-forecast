@@ -114,6 +114,8 @@ With the stack running:
 docker compose exec api bundle exec rspec
 ```
 
+The Compose `api` service sets `RAILS_ENV=development` for the server; `spec/rails_helper.rb` **forces `RAILS_ENV=test`** when specs load so request specs do not inherit development middleware (e.g. `HostAuthorization` rejecting Rack::Test’s default host and returning **403** with an HTML error page).
+
 Or from `api/` on the host (with Postgres/Redis available and env vars aligned), run the same command after `bundle install` and `bin/rails db:prepare`.
 
 ---

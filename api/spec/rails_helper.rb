@@ -1,7 +1,10 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-require 'spec_helper'
-ENV['RAILS_ENV'] ||= 'test'
-require_relative '../config/environment'
+# Docker Compose sets RAILS_ENV=development on the api service; specs must still boot Rails
+# in test mode (otherwise HostAuthorization blocks Rack::Test's www.example.com → 403 HTML).
+ENV["RAILS_ENV"] = "test"
+
+require "spec_helper"
+require_relative "../config/environment"
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 # Uncomment the line below in case you have `--require rails_helper` in the `.rspec` file
