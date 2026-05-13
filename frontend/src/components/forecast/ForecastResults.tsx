@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { asArray, iconUrl, parseWwoTimeLabel, wwoText } from '../../lib/wwo'
+import { asArray, iconUrl, parseWwoLatLng, parseWwoTimeLabel, wwoText } from '../../lib/wwo'
 import {
   DataTable,
   DataTableBodyRow,
@@ -8,6 +8,7 @@ import {
   DataTableHeaderCell,
 } from './DataTable'
 import { Panel } from './Panel'
+import { ForecastMap } from './ForecastMap'
 import { WeatherIcon } from './WeatherIcon'
 
 type ForecastResultsProps = {
@@ -65,6 +66,7 @@ export function ForecastResults({ payload }: ForecastResultsProps) {
   const safeDayIndex = Math.min(hourlyDayIndex, Math.max(0, weatherDays.length - 1))
   const selectedDay = weatherDays[safeDayIndex]
   const hourlyRows = asArray<Record<string, unknown>>(selectedDay?.hourly)
+  const mapCenter = parseWwoLatLng(area0)
 
   const currentEntries = useMemo(() => {
     if (!cur) return { pairs: [] as [string, string][], desc: '', icon: undefined as string | undefined }
@@ -120,6 +122,17 @@ export function ForecastResults({ payload }: ForecastResultsProps) {
         </p>
         {timeLine ? <p className="mt-1 text-sm text-[color:var(--muted)]">{timeLine}</p> : null}
       </header>
+
+      {mapCenter ? (
+        <Panel title="Location map">
+          <ForecastMap
+            center={mapCenter}
+            label={locationLine || (zip ? `ZIP ${zip}` : undefined)}
+          />
+        </Panel>
+      ) : (
+        <p className="text-sm text-[color:var(--muted)]">No map coordinates in this response.</p>
+      )}
 
       {cur ? (
         <Panel title="Current conditions">
