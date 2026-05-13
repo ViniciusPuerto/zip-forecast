@@ -5,6 +5,7 @@ Rails JSON API plus a React (Vite) frontend: given a US ZIP (or coordinates from
 This README is written for **code review / evaluation**: what we chose, why, and how to run it locally.
 
 **Live demo:** [https://zip-forecast-web.vercel.app/](https://zip-forecast-web.vercel.app/)
+We use a free tier on render, so the API service could be slow or down, after the first request wait some seconds so the API could start again.
 
 ---
 
@@ -117,6 +118,15 @@ docker compose exec api bundle exec rspec
 The Compose `api` service sets `RAILS_ENV=development` for the server; `spec/rails_helper.rb` **forces `RAILS_ENV=test`** when specs load so request specs do not inherit development middleware (e.g. `HostAuthorization` rejecting Rack::Test’s default host and returning **403** with an HTML error page).
 
 Or from `api/` on the host (with Postgres/Redis available and env vars aligned), run the same command after `bundle install` and `bin/rails db:prepare`.
+
+---
+
+## Continuous integration
+
+GitHub Actions runs on every push and pull request to `main` (see [`.github/workflows/ci.yml`](.github/workflows/ci.yml)):
+
+- **API:** RuboCop, Brakeman, `bin/rails db:test:prepare`, and `bundle exec rspec` against Postgres 16.
+- **Frontend:** `npm run lint` and `npm run build`.
 
 ---
 

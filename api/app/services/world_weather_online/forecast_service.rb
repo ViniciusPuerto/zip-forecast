@@ -83,7 +83,7 @@ module WorldWeatherOnline
 
       if data.key?("error") && data["error"]
         raw_err = data["error"]
-        list = raw_err.is_a?(Array) ? raw_err : [raw_err]
+        list = raw_err.is_a?(Array) ? raw_err : [ raw_err ]
         messages = list.filter_map do |e|
           next unless e.is_a?(Hash)
 
