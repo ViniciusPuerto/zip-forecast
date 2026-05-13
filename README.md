@@ -148,5 +148,3 @@ See `api/.env.example` for the API-oriented list.
 
 - The API image is built from `api/Dockerfile`; ensure **`RAILS_MASTER_KEY`** and **`DATABASE_URL`** (e.g. Neon) and **`REDIS_URL`** (e.g. Upstash) are set on the host.
 - Point the SPA’s **`VITE_API_URL`** at the public API base URL and align **`FRONTEND_ORIGIN`** on the API with the deployed frontend origin for CORS.
-
-For more task-level detail, see **`docs/specs.md`**.
