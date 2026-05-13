@@ -1,4 +1,7 @@
+import { DotLottieReact } from '@lottiefiles/dotlottie-react'
 import { useEffect, useState } from 'react'
+
+import thermometerAnimation from '../assets/loading_thermometer.json'
 
 type WarmupPhase = 'checking' | 'ready' | 'warn' | 'dismissed'
 
@@ -40,15 +43,6 @@ export function ApiWarmupBanner({ apiBase }: ApiWarmupBannerProps) {
 
   if (phase === 'dismissed') return null
 
-  if (phase === 'checking') {
-    return (
-      <p className="api-warmup api-warmup--checking" role="status" aria-live="polite">
-        Connecting to the weather API… Free hosting may sleep the service; first contact can take up to a
-        minute.
-      </p>
-    )
-  }
-
   if (phase === 'ready') {
     return (
       <p className="api-warmup api-warmup--ready" role="status" aria-live="polite">
@@ -57,10 +51,30 @@ export function ApiWarmupBanner({ apiBase }: ApiWarmupBannerProps) {
     )
   }
 
+  const isWarn = phase === 'warn'
+
   return (
-    <p className="api-warmup api-warmup--warn" role="status" aria-live="polite">
-      Could not reach the API health check. You can still search — the first forecast request may wake the
-      server.
-    </p>
+    <div
+      className={`api-warmup ${isWarn ? 'api-warmup--warn' : 'api-warmup--checking'}`}
+      role="status"
+      aria-live="polite"
+    >
+      <div className="api-warmup__lottie" aria-hidden="true">
+        <DotLottieReact data={thermometerAnimation} loop autoplay className="api-warmup__dotlottie" />
+      </div>
+      <p className="api-warmup__text">
+        {isWarn ? (
+          <>
+            Could not reach the API health check — it may still be starting. You can still search — the first
+            forecast request may wake the server.
+          </>
+        ) : (
+          <>
+            Connecting to the weather API… Free hosting may sleep the service; first contact can take up to a
+            minute.
+          </>
+        )}
+      </p>
+    </div>
   )
 }
