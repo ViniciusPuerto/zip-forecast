@@ -13,6 +13,7 @@ import { WeatherIcon } from './WeatherIcon'
 
 type ForecastResultsProps = {
   payload: unknown
+  onMapLocationPick?: (lat: number, lng: number) => void
 }
 
 function isRecord(x: unknown): x is Record<string, unknown> {
@@ -39,7 +40,7 @@ function nonEmptyParts(parts: string[]): string {
   return parts.filter(Boolean).join(', ')
 }
 
-export function ForecastResults({ payload }: ForecastResultsProps) {
+export function ForecastResults({ payload, onMapLocationPick }: ForecastResultsProps) {
   const [hourlyDayIndex, setHourlyDayIndex] = useState(0)
 
   const root = isRecord(payload) ? payload : null
@@ -125,9 +126,15 @@ export function ForecastResults({ payload }: ForecastResultsProps) {
 
       {mapCenter ? (
         <Panel title="Location map">
+          {onMapLocationPick ? (
+            <p className="mb-3 text-sm leading-snug text-[color:var(--muted)]">
+              Click the map to fill the search field with coordinates, then press <strong>Search</strong> above.
+            </p>
+          ) : null}
           <ForecastMap
             center={mapCenter}
             label={locationLine || (zip ? `ZIP ${zip}` : undefined)}
+            onMapClick={onMapLocationPick}
           />
         </Panel>
       ) : (
