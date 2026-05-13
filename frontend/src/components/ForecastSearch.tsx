@@ -2,11 +2,22 @@ import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { formatLatLngQuery } from '../lib/geoQuery'
 import { fetchForecast } from '../lib/forecastApi'
+import {
+  errorMessageFromApi,
+  isForecastPayload,
+  parseJsonBody,
+} from '../lib/forecastResponse'
 import { ForecastResults } from './forecast/ForecastResults'
 
 type ForecastSearchProps = {
   /** API origin, e.g. `http://localhost:3000` (no trailing slash). */
   apiBase: string
+}
+
+function isNetworkFailure(err: unknown): boolean {
+  if (err instanceof TypeError) return true
+  if (err instanceof Error && err.message.includes('Failed to fetch')) return true
+  return false
 }
 
 export function ForecastSearch({ apiBase }: ForecastSearchProps) {
@@ -35,18 +46,26 @@ export function ForecastSearch({ apiBase }: ForecastSearchProps) {
     setLoading(true)
     try {
       const res = await fetchForecast(trimmed, apiBase)
-      const body = await res.json().catch(() => null)
+      const text = await res.text()
+      const parsed = parseJsonBody(text)
+
       if (!res.ok) {
-        const msg =
-          body && typeof body === 'object' && 'error' in body
-            ? String((body as { error: unknown }).error)
-            : `Request failed (${res.status})`
-        setError(msg)
+        setError(errorMessageFromApi(res.status, parsed))
         return
       }
-      setPayload(body)
-    } catch {
-      setError('Could not reach the API. Check the server and CORS settings.')
+
+      if (!isForecastPayload(parsed)) {
+        setError('Unexpected response from the API.')
+        return
+      }
+
+      setPayload(parsed)
+    } catch (err: unknown) {
+      setError(
+        isNetworkFailure(err)
+          ? 'Network error: could not reach the API. Check your connection, VITE_API_URL, and CORS (FRONTEND_ORIGIN on the server).'
+          : `Something went wrong: ${err instanceof Error ? err.message : 'Unknown error'}`,
+      )
     } finally {
       setLoading(false)
     }
