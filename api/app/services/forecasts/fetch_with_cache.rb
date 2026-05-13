@@ -12,16 +12,16 @@ module Forecasts
       def call(zip)
         key = cache_key(zip)
         if (data = Rails.cache.read(key))
-          [data.deep_dup, true]
+          [ data.deep_dup, true ]
         else
           data = WorldWeatherOnline::ForecastService.new.call(zip)
           Rails.cache.write(key, data, expires_in: TTL)
-          [data, false]
+          [ data, false ]
         end
       end
 
       def cache_key(zip)
-        [*KEY_PREFIX, zip.to_s.strip]
+        [ *KEY_PREFIX, zip.to_s.strip ]
       end
     end
   end
