@@ -21,7 +21,7 @@ RSpec.describe WorldWeatherOnline::ForecastService do
             "key" => "secret-key",
             "q" => "94102",
             "format" => "json",
-            "num_of_days" => "14",
+            "num_of_days" => "7",
             "tp" => "1",
             "fx24" => "yes",
             "aqi" => "yes",

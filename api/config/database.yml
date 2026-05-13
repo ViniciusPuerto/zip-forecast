@@ -61,11 +61,14 @@ test:
 #   production:
 #     url: <%= ENV["MY_APP_DATABASE_URL"] %>
 #
-# Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
-# for a full overview on how database connection configuration can be specified.
-#
+# Production: prefer DATABASE_URL (Neon, Render, Heroku, etc.). If unset, falls back to
+# discrete credentials so local ERB evaluation (e.g. test boot) does not require DATABASE_URL.
 production:
   <<: *default
+<% if ENV["DATABASE_URL"].to_s.strip.present? %>
+  url: <%= ENV["DATABASE_URL"] %>
+<% else %>
   database: api_production
   username: api
   password: <%= ENV["API_DATABASE_PASSWORD"] %>
+<% end %>
