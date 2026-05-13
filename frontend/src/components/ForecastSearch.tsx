@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
+import { formatLatLngQuery } from '../lib/geoQuery'
 import { fetchForecast } from '../lib/forecastApi'
 import { ForecastResults } from './forecast/ForecastResults'
 
@@ -13,6 +14,7 @@ export function ForecastSearch({ apiBase }: ForecastSearchProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [payload, setPayload] = useState<unknown>(null)
+  const zipInputRef = useRef<HTMLInputElement>(null)
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault()
@@ -21,7 +23,7 @@ export function ForecastSearch({ apiBase }: ForecastSearchProps) {
 
     const trimmed = zip.trim()
     if (!trimmed) {
-      setError('Enter a ZIP code.')
+      setError('Enter a ZIP code or location.')
       return
     }
 
@@ -55,14 +57,15 @@ export function ForecastSearch({ apiBase }: ForecastSearchProps) {
       <form className="card" onSubmit={onSubmit}>
         <h2 id="forecast-search-heading">Search forecast</h2>
         <label className="field">
-          <span className="label">ZIP code</span>
+          <span className="label">ZIP or location</span>
           <input
+            ref={zipInputRef}
             className="input"
             name="zip"
-            inputMode="numeric"
-            autoComplete="postal-code"
-            placeholder="e.g. 94102"
-            maxLength={10}
+            inputMode="text"
+            autoComplete="off"
+            placeholder="e.g. 94102 or lat,lng"
+            maxLength={48}
             value={zip}
             onChange={(e) => setZip(e.target.value)}
           />
@@ -80,7 +83,14 @@ export function ForecastSearch({ apiBase }: ForecastSearchProps) {
       {payload ? (
         <section className="card card--results forecast-search__results" aria-live="polite">
           <h2>Result</h2>
-          <ForecastResults payload={payload} />
+          <ForecastResults
+            payload={payload}
+            onMapLocationPick={(lat, lng) => {
+              setError(null)
+              setZip(formatLatLngQuery(lat, lng))
+              zipInputRef.current?.focus()
+            }}
+          />
         </section>
       ) : null}
     </section>
