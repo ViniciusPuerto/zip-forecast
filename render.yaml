@@ -3,7 +3,6 @@ services:
     name: zip-forecast-api
     runtime: docker
     region: oregon
-    plan: starter
     branch: main
     dockerfilePath: ./api/Dockerfile
     dockerContext: ./api
@@ -26,15 +25,4 @@ services:
       - key: WORLD_WEATHER_ONLINE_API_KEY
         sync: false
       - key: FRONTEND_ORIGIN
-        sync: false
-
-  - type: web
-    name: zip-forecast-web
-    runtime: static
-    branch: main
-    rootDir: frontend
-    buildCommand: npm ci && npm run build
-    staticPublishPath: dist
-    envVars:
-      - key: VITE_API_URL
         sync: false
