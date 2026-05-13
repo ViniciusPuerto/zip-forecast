@@ -102,6 +102,8 @@ From the **repository root**:
 
 The first successful request for a location fetches WWO; repeat requests within **30 minutes** should return the same payload with **`from_cache: true`** in JSON and the red cache indicator in the UI.
 
+**Errors & cold starts:** Validation, missing API key, provider, and network failures show **inline under the search form**. On deploy, the SPA also **GETs `/up`** once when `VITE_API_URL` is set so a sleeping Render instance can wake before you search.
+
 ### Ports note
 
 - Postgres from the host: **localhost:5433** (mapped from container `5432`).
