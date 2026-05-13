@@ -25,6 +25,18 @@ export function iconUrl(x: unknown): string | undefined {
   return s.startsWith('http') ? s : undefined
 }
 
+export type WwoLatLng = { lat: number; lng: number }
+
+/** Parse WWO `nearest_area` latitude/longitude (string or `{ value }[]`). */
+export function parseWwoLatLng(area: Record<string, unknown> | undefined): WwoLatLng | null {
+  if (!area) return null
+  const lat = parseFloat(wwoText(area.latitude))
+  const lng = parseFloat(wwoText(area.longitude))
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
+  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return null
+  return { lat, lng }
+}
+
 /**
  * WWO `time` codes: minutes-from-midnight in "hundreds" form (e.g. `"0"`, `"900"`, `"1500"`).
  * `"24"` is end-of-day (display as midnight boundary).
