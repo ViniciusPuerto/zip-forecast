@@ -4,7 +4,7 @@ Rails JSON API plus a React (Vite) frontend: accept a **location string** (addre
 
 **Location input:** The take-home asks for an “address”; we pass the user’s text straight to WWO as `q` (same as their API). That covers street-style queries where the provider resolves them, plus ZIP/postcode, city names, and `lat,lng` from the map.
 
-This README is written for **code review / evaluation**: what we chose, why, and how to run it locally.
+This README is written for **code review / evaluation**: what was chosen, why, and how to run it locally.
 
 **Live demo:** [https://zip-forecast-web.vercel.app/](https://zip-forecast-web.vercel.app/)
 We use a free tier on render, so the API service could be slow or down, after the first request wait some seconds so the API could start again.
