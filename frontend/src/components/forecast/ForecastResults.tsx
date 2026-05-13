@@ -45,6 +45,7 @@ export function ForecastResults({ payload, onMapLocationPick }: ForecastResultsP
 
   const root = isRecord(payload) ? payload : null
   const zip = root && typeof root.zip === 'string' ? root.zip : ''
+  const fromCache = root && root.from_cache === true
   const data = root && isRecord(root.data) ? root.data : null
 
   const areas = asArray<Record<string, unknown>>(data?.nearest_area)
@@ -117,9 +118,21 @@ export function ForecastResults({ payload, onMapLocationPick }: ForecastResultsP
   return (
     <div className="flex flex-col gap-4">
       <header className="border-b border-[color:var(--border)] pb-3">
-        <p className="text-lg font-semibold text-[color:var(--text)]">
-          {zip ? `ZIP ${zip}` : 'Forecast'}
-          {locationLine ? <span className="font-normal text-[color:var(--muted)]"> · {locationLine}</span> : null}
+        <p className="flex flex-wrap items-center gap-2 text-lg font-semibold text-[color:var(--text)]">
+          <span>
+            {zip ? `ZIP ${zip}` : 'Forecast'}
+            {locationLine ? (
+              <span className="font-normal text-[color:var(--muted)]"> · {locationLine}</span>
+            ) : null}
+          </span>
+          {fromCache ? (
+            <span
+              className="inline-block size-2 shrink-0 rounded-full bg-red-600"
+              title="From cache"
+              role="img"
+              aria-label="From cache"
+            />
+          ) : null}
         </p>
         {timeLine ? <p className="mt-1 text-sm text-[color:var(--muted)]">{timeLine}</p> : null}
       </header>
