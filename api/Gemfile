@@ -11,7 +11,7 @@ gem "puma", ">= 5.0"
 # Redis for Action Cable, cache, and Sidekiq-style workloads
 gem "redis", ">= 4.0.1"
 # Rails 7.2 RedisCacheStore uses ConnectionPool 2.x constructor; redis 5 resolves 3.x otherwise.
-gem "connection_pool", "~> 2.4"
+gem "connection_pool", "~> 3.0"
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
