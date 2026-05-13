@@ -1,3 +1,4 @@
+import { ApiWarmupBanner } from './components/ApiWarmupBanner'
 import { ForecastSearch } from './components/ForecastSearch'
 
 const apiBaseFromEnv = () => import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? ''
@@ -17,6 +18,7 @@ export default function App() {
       </header>
 
       <main className="main">
+        {apiBase.trim() ? <ApiWarmupBanner key={apiBase.trim()} apiBase={apiBase.trim()} /> : null}
         <ForecastSearch apiBase={apiBase} />
       </main>
 

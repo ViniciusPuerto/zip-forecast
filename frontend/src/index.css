@@ -193,6 +193,32 @@ h2 {
   color: var(--danger);
 }
 
+.api-warmup {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.api-warmup--checking {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+}
+
+.api-warmup--ready {
+  color: var(--muted);
+  background: var(--surface);
+}
+
+.api-warmup--warn {
+  color: var(--text);
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+  border-color: color-mix(in srgb, var(--danger) 35%, var(--border));
+}
+
 .pre {
   margin: 0;
   padding: 1rem;
