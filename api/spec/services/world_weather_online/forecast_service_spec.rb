@@ -38,6 +38,16 @@ RSpec.describe WorldWeatherOnline::ForecastService do
       expect(result.dig("current_condition", 0, "temp_F")).to eq("60")
     end
 
+    it "passes city and free-text locations through as WWO q" do
+      stub_request(:get, wwo_uri_matcher)
+        .with(query: hash_including("q" => "Paris, France"))
+        .to_return(status: 200, body: success_body, headers: { "Content-Type" => "application/json" })
+
+      described_class.new(api_key: "secret-key").call("Paris, France")
+
+      expect(WebMock).to have_requested(:get, wwo_uri_matcher).with(query: hash_including("q" => "Paris, France"))
+    end
+
     it "raises RequestError on non-success HTTP status" do
       stub_request(:get, wwo_uri_matcher).to_return(status: 503, body: "unavailable")
 

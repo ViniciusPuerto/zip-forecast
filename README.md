@@ -1,6 +1,8 @@
 # Zip Forecast
 
-Rails JSON API plus a React (Vite) frontend: given a US ZIP (or coordinates from the map), return forecast data from [World Weather Online](https://www.worldweatheronline.com/weather-api/), cache results for **30 minutes** per key, and show whether the response came from cache.
+Rails JSON API plus a React (Vite) frontend: accept a **location string** (address, city, ZIP/postal code, coordinates, etc.—anything [World Weather Online’s `q` parameter](https://www.worldweatheronline.com/weather-api/api/docs/local-city-town-weather-api.aspx) supports), return forecast data, cache results for **30 minutes** per query, and show whether the response came from cache.
+
+**Location input:** The take-home asks for an “address”; we pass the user’s text straight to WWO as `q` (same as their API). That covers street-style queries where the provider resolves them, plus ZIP/postcode, city names, and `lat,lng` from the map.
 
 This README is written for **code review / evaluation**: what we chose, why, and how to run it locally.
 
@@ -13,12 +15,12 @@ We use a free tier on render, so the API service could be slow or down, after th
 
 ### Rails API-only (no server-rendered UI)
 
-The backend exposes JSON only (`GET /forecast?zip=…`). That keeps HTTP concerns, validation, and serialization in one place, lets the SPA own presentation, and makes contract testing straightforward with request specs. It also mirrors common production splits (API + separate static host).
+The backend exposes JSON only (`GET /forecast?q=…`, with `zip=` kept as a **deprecated alias** for the same value). That keeps HTTP concerns, validation, and serialization in one place, lets the SPA own presentation, and makes contract testing straightforward with request specs. It also mirrors common production splits (API + separate static host).
 
 ### Service objects for weather and caching
 
 - **`WorldWeatherOnline::ForecastService`** — Encapsulates HTTP to WWO, response parsing, and error types (`ApiError`, `RequestError`, `ConfigurationError`). The controller does not know URL shapes or query params, which keeps responsibilities clear and makes the integration easy to stub in tests.
-- **`Forecasts::FetchWithCache`** — Implements read-through cache: `Rails.cache.read` → on miss, call the forecast service → `Rails.cache.write` with a fixed TTL. Controllers stay thin (parse `zip`, call one collaborator, render JSON).
+- **`Forecasts::FetchWithCache`** — Implements read-through cache: `Rails.cache.read` → on miss, call the forecast service → `Rails.cache.write` with a fixed TTL. Controllers stay thin (resolve `q` / `zip`, call one collaborator, render JSON).
 
 Together, this follows **single responsibility** and **testability**: units are small, names describe behavior, and failures map to explicit rescues in `ForecastsController`.
 
@@ -28,7 +30,7 @@ The UI needs a search flow, a data-heavy table, map interaction (Leaflet), and c
 
 ### Redis for caching (with explicit TTL)
 
-`Forecasts::FetchWithCache` uses **`Rails.cache`** with `expires_in: 30.minutes` and a versioned key prefix (`forecast`, `v1`, normalized `zip`). In **development** and **production**, when `REDIS_URL` is set, the app uses **`redis_cache_store`**, so:
+`Forecasts::FetchWithCache` uses **`Rails.cache`** with `expires_in: 30.minutes` and a versioned key prefix (`forecast`, `v1`, normalized location string). In **development** and **production**, when `REDIS_URL` is set, the app uses **`redis_cache_store`**, so:
 
 - TTL is **centralized** in one constant (`TTL`), not scattered in callers.
 - Cache is **shared** across processes/instances (important if you scale the API horizontally).
@@ -96,9 +98,9 @@ From the **repository root**:
 
    - **Frontend:** [http://localhost:5173](http://localhost:5173)
    - **API health:** [http://localhost:3000/up](http://localhost:3000/up)
-   - **Example forecast:** [http://localhost:3000/forecast?zip=90210](http://localhost:3000/forecast?zip=90210)
+   - **Example forecast:** [http://localhost:3000/forecast?q=90210](http://localhost:3000/forecast?q=90210) (same value as `zip=90210` if you still use the old query name)
 
-The first successful request for a ZIP fetches WWO; repeat requests within **30 minutes** should return the same payload with **`from_cache: true`** in JSON and the red cache indicator in the UI.
+The first successful request for a location fetches WWO; repeat requests within **30 minutes** should return the same payload with **`from_cache: true`** in JSON and the red cache indicator in the UI.
 
 ### Ports note
 

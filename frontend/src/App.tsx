@@ -9,9 +9,10 @@ export default function App() {
     <div className="page">
       <header className="header">
         <p className="eyebrow">Zip Forecast</p>
-        <h1>Weather by ZIP code</h1>
+        <h1>Weather by location</h1>
         <p className="lede">
-          Look up current conditions and forecast details for a US ZIP code.
+          Look up current conditions and forecast details using any location string World Weather Online
+          accepts—US ZIP, city or town, UK postcode, Canada postal code, coordinates, and more.
         </p>
       </header>
 

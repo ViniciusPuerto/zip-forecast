@@ -1,15 +1,16 @@
 /**
  * Builds the absolute GET URL for the forecast endpoint (visible in DevTools → Network).
+ * Uses `q` (World Weather Online location string); see API docs for accepted formats.
  */
-export function forecastRequestUrl(apiBase: string, zip: string): string {
+export function forecastRequestUrl(apiBase: string, locationQuery: string): string {
   const base = apiBase.replace(/\/$/, '')
-  const params = new URLSearchParams({ zip: zip.trim() })
+  const params = new URLSearchParams({ q: locationQuery.trim() })
   return `${base}/forecast?${params.toString()}`
 }
 
-/** Performs a GET forecast request (no body; query string carries `zip`). */
-export function fetchForecast(zip: string, apiBase: string): Promise<Response> {
-  return fetch(forecastRequestUrl(apiBase, zip), {
+/** Performs a GET forecast request (query string `q` = WWO location). */
+export function fetchForecast(locationQuery: string, apiBase: string): Promise<Response> {
+  return fetch(forecastRequestUrl(apiBase, locationQuery), {
     method: 'GET',
     headers: {
       Accept: 'application/json',

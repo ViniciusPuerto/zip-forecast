@@ -10,20 +10,20 @@ type ForecastSearchProps = {
 }
 
 export function ForecastSearch({ apiBase }: ForecastSearchProps) {
-  const [zip, setZip] = useState('')
+  const [locationQuery, setLocationQuery] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [payload, setPayload] = useState<unknown>(null)
-  const zipInputRef = useRef<HTMLInputElement>(null)
+  const locationInputRef = useRef<HTMLInputElement>(null)
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault()
     setError(null)
     setPayload(null)
 
-    const trimmed = zip.trim()
+    const trimmed = locationQuery.trim()
     if (!trimmed) {
-      setError('Enter a ZIP code or location.')
+      setError('Enter an address, city, ZIP/postal code, or coordinates.')
       return
     }
 
@@ -57,17 +57,17 @@ export function ForecastSearch({ apiBase }: ForecastSearchProps) {
       <form className="card" onSubmit={onSubmit}>
         <h2 id="forecast-search-heading">Search forecast</h2>
         <label className="field">
-          <span className="label">ZIP or location</span>
+          <span className="label">Address or location</span>
           <input
-            ref={zipInputRef}
+            ref={locationInputRef}
             className="input"
-            name="zip"
+            name="q"
             inputMode="text"
-            autoComplete="off"
-            placeholder="e.g. 94102 or lat,lng"
-            maxLength={48}
-            value={zip}
-            onChange={(e) => setZip(e.target.value)}
+            autoComplete="street-address"
+            placeholder="e.g. 94102, London, Paris, France, or 37.77,-122.42"
+            maxLength={256}
+            value={locationQuery}
+            onChange={(e) => setLocationQuery(e.target.value)}
           />
         </label>
         <button className="button" type="submit" disabled={loading}>
@@ -87,8 +87,8 @@ export function ForecastSearch({ apiBase }: ForecastSearchProps) {
             payload={payload}
             onMapLocationPick={(lat, lng) => {
               setError(null)
-              setZip(formatLatLngQuery(lat, lng))
-              zipInputRef.current?.focus()
+              setLocationQuery(formatLatLngQuery(lat, lng))
+              locationInputRef.current?.focus()
             }}
           />
         </section>

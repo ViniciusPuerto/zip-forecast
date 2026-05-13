@@ -44,7 +44,12 @@ export function ForecastResults({ payload, onMapLocationPick }: ForecastResultsP
   const [hourlyDayIndex, setHourlyDayIndex] = useState(0)
 
   const root = isRecord(payload) ? payload : null
-  const zip = root && typeof root.zip === 'string' ? root.zip : ''
+  const locationQuery =
+    root && typeof root.q === 'string'
+      ? root.q
+      : root && typeof root.zip === 'string'
+        ? root.zip
+        : ''
   const fromCache = root && root.from_cache === true
   const data = root && isRecord(root.data) ? root.data : null
 
@@ -110,7 +115,7 @@ export function ForecastResults({ payload, onMapLocationPick }: ForecastResultsP
   if (!data) {
     return (
       <p className="text-sm text-[color:var(--muted)]">
-        {zip ? `ZIP ${zip}: ` : ''}No forecast data in the response.
+        {locationQuery ? `${locationQuery}: ` : ''}No forecast data in the response.
       </p>
     )
   }
@@ -120,7 +125,7 @@ export function ForecastResults({ payload, onMapLocationPick }: ForecastResultsP
       <header className="border-b border-[color:var(--border)] pb-3">
         <p className="flex flex-wrap items-center gap-2 text-lg font-semibold text-[color:var(--text)]">
           <span>
-            {zip ? `ZIP ${zip}` : 'Forecast'}
+            {locationQuery ? locationQuery : 'Forecast'}
             {locationLine ? (
               <span className="font-normal text-[color:var(--muted)]"> · {locationLine}</span>
             ) : null}
@@ -146,7 +151,7 @@ export function ForecastResults({ payload, onMapLocationPick }: ForecastResultsP
           ) : null}
           <ForecastMap
             center={mapCenter}
-            label={locationLine || (zip ? `ZIP ${zip}` : undefined)}
+            label={locationLine || (locationQuery ? locationQuery : undefined)}
             onMapClick={onMapLocationPick}
           />
         </Panel>

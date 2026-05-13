@@ -33,12 +33,12 @@ module WorldWeatherOnline
       @api_key = api_key
     end
 
-    # @param zip [String] US ZIP or other supported +q+ value
+    # @param location [String] any WWO +q+ value (city, US ZIP, UK postcode, lat,lng, …)
     # @return [Hash] the provider +data+ object (string keys), unmodified shape
-    def call(zip)
+    def call(location)
       raise ConfigurationError, "WORLD_WEATHER_ONLINE_API_KEY is not set" if @api_key.blank?
 
-      uri = build_uri(zip)
+      uri = build_uri(location)
       response = perform_get(uri)
 
       unless response.is_a?(Net::HTTPSuccess)
@@ -51,10 +51,10 @@ module WorldWeatherOnline
 
     private
 
-    def build_uri(zip)
+    def build_uri(location)
       query = DEFAULT_QUERY.merge(
         "key" => @api_key,
-        "q" => zip.to_s
+        "q" => location.to_s
       )
       uri = URI(BASE_URL)
       uri.query = URI.encode_www_form(query)
