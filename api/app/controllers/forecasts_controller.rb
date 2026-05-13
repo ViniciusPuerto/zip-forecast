@@ -6,8 +6,8 @@ class ForecastsController < ApplicationController
       return
     end
 
-    data = WorldWeatherOnline::ForecastService.new.call(zip)
-    render json: { zip: zip, data: data }, status: :ok
+    data, from_cache = Forecasts::FetchWithCache.call(zip)
+    render json: { zip: zip, data: data, from_cache: from_cache }, status: :ok
   rescue WorldWeatherOnline::ConfigurationError
     render json: { error: "weather service is not configured" }, status: :service_unavailable
   rescue WorldWeatherOnline::ApiError, WorldWeatherOnline::RequestError => e
