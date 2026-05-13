@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import L from 'leaflet'
-import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
+import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
@@ -19,6 +19,16 @@ L.Icon.Default.mergeOptions({
 type ForecastMapProps = {
   center: { lat: number; lng: number }
   label?: string
+  onMapClick?: (lat: number, lng: number) => void
+}
+
+function MapClickHandler({ onMapClick }: { onMapClick: (lat: number, lng: number) => void }) {
+  useMapEvents({
+    click(e) {
+      onMapClick(e.latlng.lat, e.latlng.lng)
+    },
+  })
+  return null
 }
 
 function FlyToCenter({ center }: { center: { lat: number; lng: number } }) {
@@ -30,7 +40,7 @@ function FlyToCenter({ center }: { center: { lat: number; lng: number } }) {
   return null
 }
 
-export function ForecastMap({ center, label }: ForecastMapProps) {
+export function ForecastMap({ center, label, onMapClick }: ForecastMapProps) {
   return (
     <div
       className="overflow-hidden rounded-lg border border-[color:var(--border)]"
@@ -42,6 +52,7 @@ export function ForecastMap({ center, label }: ForecastMapProps) {
         className="isolate z-0 h-full w-full [&_.leaflet-container]:h-full [&_.leaflet-container]:w-full [&_.leaflet-container]:font-[inherit]"
         scrollWheelZoom
       >
+        {onMapClick ? <MapClickHandler onMapClick={onMapClick} /> : null}
         <FlyToCenter center={center} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
