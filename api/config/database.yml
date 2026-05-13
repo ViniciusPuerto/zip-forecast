@@ -43,6 +43,10 @@ development:
 test:
   <<: *default
   database: api_test
+  host: <%= (h = ENV["DB_HOST"].to_s.strip).empty? ? "127.0.0.1" : h %>
+  username: <%= (u = ENV["DB_USERNAME"].to_s.strip).empty? ? "null" : u %>
+  password: <%= (p = ENV["DB_PASSWORD"].to_s.strip).empty? ? "null" : p %>
+  port: <%= ENV.fetch("DB_PORT", 5432) %>
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
