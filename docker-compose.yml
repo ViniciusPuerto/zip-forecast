@@ -28,6 +28,7 @@ services:
       retries: 5
 
   api:
+    # Local: uses db + redis services. Production: point DATABASE_URL (Neon) and REDIS_URL (Upstash); see api/.env.example.
     build:
       context: ./api
       dockerfile: Dockerfile
